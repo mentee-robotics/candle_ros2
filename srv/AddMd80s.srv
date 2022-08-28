@@ -1,5 +1,6 @@
 uint16[] drive_ids
 float32[] watchdog_kp
+float32[] watchdog_kd
 float32[] torque_offset
 float32[] soft_limit
 float32[] max_position

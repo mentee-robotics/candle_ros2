@@ -47,6 +47,7 @@ void Md80Node::service_addMd80(const std::shared_ptr<candle_ros2::srv::AddMd80s:
 		motors.push_back(request->drive_ids[i]);
 		MotorCommand_T config;
         config["kp"] = request->watchdog_kp[i];
+        config["kd"] = request->watchdog_kd[i];
         config["torque_offset"] = request->torque_offset[i];
         config["soft_limit"] = request->soft_limit[i];
         config["max_position"] = request->max_position[i];
