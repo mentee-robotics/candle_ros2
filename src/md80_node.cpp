@@ -248,6 +248,7 @@ void Md80Node::publishJointStates()
 			jointStateMsg.position.push_back(motorStatus["position"]);
 			jointStateMsg.velocity.push_back(motorStatus["velocity"]);
 			jointStateMsg.effort.push_back(motorStatus["torque"]);
+			jointStateMsg.temperature.push_back(motorStatus["temperature"]);
 			jointStateMsg.frame_ids.push_back(motorStatus["seq"]);
 			jointStateMsg.time_stamps.push_back(motorStatus["time"]);
 
