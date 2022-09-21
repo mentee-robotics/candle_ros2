@@ -249,6 +249,7 @@ void Md80Node::publishJointStates()
 			jointStateMsg.velocity.push_back(motorStatus["velocity"]);
 			jointStateMsg.effort.push_back(motorStatus["torque"]);
 			jointStateMsg.temperature.push_back(motorStatus["temperature"]);
+			jointStateMsg.savgol_vel.push_back(motorStatus["savgol_vel"]);
 			jointStateMsg.frame_ids.push_back(motorStatus["seq"]);
 			jointStateMsg.time_stamps.push_back(motorStatus["time"]);
 
@@ -291,6 +292,28 @@ void Md80Node::motionCommandCallback(const std::shared_ptr<candle_ros2::msg::Mot
 		}
 	}
 }
+
+void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParms> msg)
+{
+	for(int i = 0; i < (int)msg->drive_ids.size(); i++)
+	{
+		try
+		{
+			auto candle = findCandleByMd80Id(msg->drive_ids[i]);
+			if(candle!= NULL)
+			{
+				auto&md = candle->md80s.at(msg->drive_ids[i]);
+				md.setSavgolCoeffs(msg->coeffs);
+			}
+			else RCLCPP_WARN(this->get_logger(), "Drive with ID: %d savgol was not set", msg->drive_ids[i]);
+		}
+		catch(const char* eMsg)
+		{
+			RCLCPP_WARN(this->get_logger(), eMsg);
+		}
+	}
+}
+
 void Md80Node::impedanceCommandCallback(const std::shared_ptr<candle_ros2::msg::ImpedanceCommand> msg)
 {
 	if(msg->drive_ids.size() != msg->kp.size() || msg->drive_ids.size() != msg->kd.size())

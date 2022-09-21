@@ -151,6 +151,7 @@ void Md80Node::publishJointStates()
 		jointStateMsg.velocity.push_back(0.02);
 		jointStateMsg.effort.push_back(0.03);
 		jointStateMsg.frame_ids.push_back(1);
+		jointStateMsg.savgol_vel.push_back(0.055);
 		jointStateMsg.time_stamps.push_back(166666.11);
 	}
 	this->jointStatePub->publish(jointStateMsg);
@@ -210,6 +211,12 @@ void Md80Node::impedanceCommandCallback(const std::shared_ptr<candle_ros2::msg::
 			RCLCPP_WARN(this->get_logger(), eMsg);
 		}	
 	}
+}
+
+void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParms> msg)
+{
+	for(int i = 0; i < (int)msg->drive_ids.size(); i++)
+		RCLCPP_INFO(this->get_logger(), "coeffs %d", msg->drive_ids[i]);
 }
 
 void Md80Node::velocityCommandCallback(const std::shared_ptr<candle_ros2::msg::VelocityPidCommand> msg)

@@ -8,10 +8,12 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <numeric>
 
 
 typedef std::map<std::string, double> MotorStatus_T;
 typedef std::map<std::string, float> MotorCommand_T;
+typedef std::vector<float>  SavgolVector;
 
 
 #define mdout std::cout << "[MD] "
@@ -32,7 +34,7 @@ namespace mab
         float velocity = 0.0f;
         float torque = 0.0f;
         float prevPosition = 0.0f;
-        float prevTime = 0.0f;
+        double prevTime = 0.0;
         MotorStatus_T motorStatus;
         uint8_t temperature = 0;
         uint16_t errorVector = 0;
@@ -72,6 +74,25 @@ namespace mab
         StdMd80CommandFrame_t commandFrame;
         StdMd80ResponseFrame_t responseFrame;
 
+        // high_pid_params
+        bool useHighPid = false;
+        float h_kp = 0.0f;
+        float h_kd = 0.0f;
+        float h_ki = 0.0f;
+        float h_maxAggError = 0.0f;
+        float h_limit_scale = 0.0f;
+        std::vector<float> h_aggError;
+        float pidPos = 0.0f;
+        int aggErrCurrIndex = 0;
+
+        // Savgol filter
+        bool do_savgol = false;
+        SavgolVector savgolCoeffs;
+        int savgolSizeOfBuffer = 0;
+        SavgolVector savgolPosBuffer;
+        float savgolVelocity = 0.0f;
+
+        // Private functions
         void packImpedanceFrame();
         void packPositionFrame();
         void packVelocityFrame();
@@ -79,6 +100,8 @@ namespace mab
         void watchdog();
         void updateTargets();
         void setImpedanceControllerParams(float kp, float kd);
+        void pid();
+        float savgol(double newPos);
     
     public:
         /**
@@ -117,6 +140,12 @@ namespace mab
          */
         void setImpedanceRequestedControllerParams(float kp, float kd);
 
+        /**
+         * @brief Set the coeffs for savgol filter vel compute
+         * @param coeef a vector of float coeffeciants for savgol filter
+         */
+        void setSavgolCoeffs(SavgolVector coeffs);
+
         // simple setters
         /**
          * @brief Set the Max Torque object
@@ -137,7 +166,7 @@ namespace mab
          * @brief Set the Target Position for Position PID and Impedance modes.
          * @param target target position in radians
          */
-        void setTargetPosition(float target) { requestedPosition = target; };
+        void setTargetPosition(float target);
         /**
          * @brief Set the frame id of the transmit
          * @param target target position in radians
@@ -252,7 +281,5 @@ namespace mab
         void __setControlMode(Md80Mode_E mode);
     };
 }
-
-
 
 
