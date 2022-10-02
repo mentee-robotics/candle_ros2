@@ -21,8 +21,6 @@ find_package(sensor_msgs REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-find_package(eigen3_cmake_module REQUIRED)
-find_package(Eigen3)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ImpedanceCommand.msg"
