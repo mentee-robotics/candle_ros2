@@ -4,6 +4,7 @@
 #include <ctime>
 #include "candle_ros2/msg/impedance_command.hpp"
 #include "candle_ros2/msg/savgol_params.hpp"
+#include "candle_ros2/msg/kalman_params.hpp"
 #include "candle_ros2/msg/motion_command.hpp"
 #include "candle_ros2/msg/velocity_pid_command.hpp"
 #include "candle_ros2/msg/position_pid_command.hpp"
@@ -39,6 +40,7 @@ private:
     rclcpp::Subscription<candle_ros2::msg::MotionCommand>::SharedPtr motionCommandSub;
     rclcpp::Subscription<candle_ros2::msg::ImpedanceCommand>::SharedPtr impedanceCommandSub;
     rclcpp::Subscription<candle_ros2::msg::SavgolParams>::SharedPtr savgolParamsSub;
+    rclcpp::Subscription<candle_ros2::msg::KalmanParams>::SharedPtr kalmanParamsSub;
     rclcpp::Subscription<candle_ros2::msg::VelocityPidCommand>::SharedPtr velocityCommandSub;
     rclcpp::Subscription<candle_ros2::msg::PositionPidCommand>::SharedPtr positionCommandSub;
     
@@ -58,6 +60,7 @@ private:
     void motionCommandCallback(const std::shared_ptr<candle_ros2::msg::MotionCommand> msg);
     void impedanceCommandCallback(const std::shared_ptr<candle_ros2::msg::ImpedanceCommand> msg);
     void savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParams> msg);
+    void kalmanParamsCallback(const std::shared_ptr<candle_ros2::msg::KalmanParams> msg);
     void velocityCommandCallback(const std::shared_ptr<candle_ros2::msg::VelocityPidCommand> msg);
     void positionCommandCallback(const std::shared_ptr<candle_ros2::msg::PositionPidCommand> msg);
 };

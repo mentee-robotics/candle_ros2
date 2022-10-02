@@ -45,6 +45,8 @@ Md80Node::Md80Node() : Node("candle_ros2_node")
 		std::bind(&Md80Node::positionCommandCallback, this, std::placeholders::_1));
 	savgolParamsSub = this->create_subscription<candle_ros2::msg::SavgolParams>("md80/savgol_params", 10,
 		std::bind(&Md80Node::savgolParamsCallback, this, std::placeholders::_1));
+	kalmanParamsSub = this->create_subscription<candle_ros2::msg::KalmanParams>("md80/kalman_params", 10,
+		std::bind(&Md80Node::kalmanParamsCallback, this, std::placeholders::_1));
 	jointStatePub = this->create_publisher<candle_ros2::msg::CandleJointState>("md80/joint_states", 1);
 
 
@@ -252,6 +254,7 @@ void Md80Node::publishJointStates()
 			jointStateMsg.effort.push_back(motorStatus["torque"]);
 			jointStateMsg.temperature.push_back(motorStatus["temperature"]);
 			jointStateMsg.savgol_vel.push_back(motorStatus["savgol_vel"]);
+			jointStateMsg.kalman_vel.push_back(motorStatus["kalman_vel"]);
 			jointStateMsg.frame_ids.push_back(motorStatus["seq"]);
 			jointStateMsg.time_stamps.push_back(motorStatus["time"]);
 
@@ -314,6 +317,27 @@ void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::Savg
 			RCLCPP_WARN(this->get_logger(), eMsg);
 		}
 	}
+}
+
+void Md80Node::kalmanParamsCallback(const std::shared_ptr<candle_ros2::msg::KalmanParams> msg)
+{
+		try
+		{
+			auto candle = findCandleByMd80Id(msg->drive_id);
+			if(candle!= NULL)
+			{
+				auto&md = candle->md80s.at(msg->drive_id);
+                md.setKalmanFilter(msg->kalman_process_noise_config,
+                                   msg->kalman_measurement_noise_config,
+                                   msg->kalman_initial_state_noise_config,
+                                   msg->frequency);
+			}
+			else RCLCPP_WARN(this->get_logger(), "Drive with ID: %d kalman was not set", msg->drive_id);
+		}
+		catch(const char* eMsg)
+		{
+			RCLCPP_WARN(this->get_logger(), eMsg);
+		}
 }
 
 void Md80Node::impedanceCommandCallback(const std::shared_ptr<candle_ros2::msg::ImpedanceCommand> msg)
