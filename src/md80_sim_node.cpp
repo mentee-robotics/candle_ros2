@@ -28,6 +28,10 @@ Md80Node::Md80Node() : Node("candle_ros2_node")
 		std::bind(&Md80Node::velocityCommandCallback, this, std::placeholders::_1));
 	positionCommandSub = this->create_subscription<candle_ros2::msg::PositionPidCommand>("md80/position_pid_command", 10,
 		std::bind(&Md80Node::positionCommandCallback, this, std::placeholders::_1));
+	savgolParamsSub = this->create_subscription<candle_ros2::msg::SavgolParams>("md80/savgol_params", 10,
+		std::bind(&Md80Node::savgolParamsCallback, this, std::placeholders::_1));
+	kalmanParamsSub = this->create_subscription<candle_ros2::msg::KalmanParams>("md80/kalman_params", 10,
+		std::bind(&Md80Node::kalmanParamsCallback, this, std::placeholders::_1));
 
 	jointStatePub = this->create_publisher<candle_ros2::msg::CandleJointState>("md80/joint_states", 1);
 	pubTimer = this->create_wall_timer(std::chrono::milliseconds(10), std::bind(&Md80Node::publishJointStates, this));
@@ -217,6 +221,30 @@ void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::Savg
 {
 	for(int i = 0; i < (int)msg->drive_ids.size(); i++)
 		RCLCPP_INFO(this->get_logger(), "coeffs %d", msg->drive_ids[i]);
+}
+
+void Md80Node::kalmanParamsCallback(const std::shared_ptr<candle_ros2::msg::KalmanParams> msg)
+{
+
+	RCLCPP_INFO(this->get_logger(), "drive with id: %d", msg->drive_id);
+    RCLCPP_INFO(this->get_logger(), "kalman_process_noise_config %f %f %f %f",
+     msg->kalman_process_noise_config[0],
+     msg->kalman_process_noise_config[1],
+     msg->kalman_process_noise_config[2],
+     msg->kalman_process_noise_config[3]
+     );
+    RCLCPP_INFO(this->get_logger(), "kalman_measurement_noise_config %f %f %f %f",
+     msg->kalman_measurement_noise_config[0],
+     msg->kalman_measurement_noise_config[1],
+     msg->kalman_measurement_noise_config[2],
+     msg->kalman_measurement_noise_config[3]
+     );
+    RCLCPP_INFO(this->get_logger(), "kalman_initial_state_noise_config %f %f %f %f",
+     msg->kalman_initial_state_noise_config[0],
+     msg->kalman_initial_state_noise_config[1],
+     msg->kalman_initial_state_noise_config[2],
+     msg->kalman_initial_state_noise_config[3]
+     );
 }
 
 void Md80Node::velocityCommandCallback(const std::shared_ptr<candle_ros2::msg::VelocityPidCommand> msg)
