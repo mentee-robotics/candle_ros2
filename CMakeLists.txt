@@ -24,6 +24,8 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ImpedanceCommand.msg"
+  "msg/SavgolParams.msg"
+  "msg/KalmanParams.msg"
   "msg/MotionCommand.msg"
   "msg/Pid.msg"
   "msg/VelocityPidCommand.msg"
