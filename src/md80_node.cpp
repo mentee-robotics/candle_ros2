@@ -43,7 +43,8 @@ Md80Node::Md80Node() : Node("candle_ros2_node")
 		std::bind(&Md80Node::velocityCommandCallback, this, std::placeholders::_1));
 	positionCommandSub = this->create_subscription<candle_ros2::msg::PositionPidCommand>("md80/position_pid_command", 10,
 		std::bind(&Md80Node::positionCommandCallback, this, std::placeholders::_1));
-	
+	savgolParamsSub = this->create_subscription<candle_ros2::msg::SavgolParams>("md80/savgol_params", 10,
+		std::bind(&Md80Node::savgolParamsCallback, this, std::placeholders::_1));
 	jointStatePub = this->create_publisher<candle_ros2::msg::CandleJointState>("md80/joint_states", 1);
 
 
@@ -51,6 +52,7 @@ Md80Node::Md80Node() : Node("candle_ros2_node")
 	pubTimer->cancel();
 	RCLCPP_INFO(this->get_logger(), "candle_ros2_node %s has started.", version.c_str());
 }
+
 Md80Node::~Md80Node()
 {
 	for(auto candle : candleInstances)
@@ -293,7 +295,7 @@ void Md80Node::motionCommandCallback(const std::shared_ptr<candle_ros2::msg::Mot
 	}
 }
 
-void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParms> msg)
+void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParams> msg)
 {
 	for(int i = 0; i < (int)msg->drive_ids.size(); i++)
 	{

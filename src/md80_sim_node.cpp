@@ -213,7 +213,7 @@ void Md80Node::impedanceCommandCallback(const std::shared_ptr<candle_ros2::msg::
 	}
 }
 
-void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParms> msg)
+void Md80Node::savgolParamsCallback(const std::shared_ptr<candle_ros2::msg::SavgolParams> msg)
 {
 	for(int i = 0; i < (int)msg->drive_ids.size(); i++)
 		RCLCPP_INFO(this->get_logger(), "coeffs %d", msg->drive_ids[i]);

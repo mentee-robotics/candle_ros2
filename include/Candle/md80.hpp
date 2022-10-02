@@ -9,8 +9,8 @@
 #include <map>
 #include <algorithm>
 #include <numeric>
-#include <Eigen/Dense>
-#include <kalman_filter.hpp>
+#include <Candle/Eigen/Dense>
+#include <Candle/kalman_filter.hpp>
 
 typedef std::map<std::string, double> MotorStatus_T;
 typedef std::map<std::string, float> MotorCommand_T;
