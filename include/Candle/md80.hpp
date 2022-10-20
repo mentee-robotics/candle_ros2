@@ -9,7 +9,7 @@
 #include <map>
 #include <algorithm>
 #include <numeric>
-#include <Candle/Eigen/Dense>
+#include <Eigen/Dense>
 #include <Candle/kalman_filter.hpp>
 
 typedef std::map<std::string, double> MotorStatus_T;
@@ -110,6 +110,8 @@ namespace mab
         void packPositionFrame();
         void packVelocityFrame();
         void packMotionTargetsFrame();
+
+        // our private add function
         void watchdog();
         void updateTargets();
         void setImpedanceControllerParams(float kp, float kd);
